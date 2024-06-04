@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Interview.Biocad.Library.Presentation.Api;
+namespace Interview.Biocad.Library.Presentation.Api.Books;
 
 internal class BooksGetManyRequestValidator : AbstractValidator<BooksGetManyRequest> {
     public BooksGetManyRequestValidator() {

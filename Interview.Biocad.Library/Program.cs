@@ -9,9 +9,14 @@ builder.Configuration
     .AddEnvironmentVariables(biocadEnvConfigurationPrefix);
 
 builder.Services
+    .AddHttpLogging(_ => { });
+
+builder.Services
     .AddBiocadLibraryServices();
 
 var app = builder.Build();
+
+app.UseHttpLogging();
 
 app.MapBiocadLibraryEndpoints();
 

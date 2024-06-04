@@ -1,6 +1,6 @@
 ﻿namespace Interview.Biocad.Library.Configuration;
 
-public class FileBooksRepositoryOptions {
+internal class BooksRepositoryOptions {
     public const string Section = "Library:Books";
 
     /// <summary>

@@ -3,8 +3,8 @@
 /// <summary>
 /// Author of the book.
 /// </summary>
-public class Author {
-    public string Name { get; init; }
+internal class Author {
+    public string Name { get; init; } = default!;
 
-    public string Lang { get; init; }
+    public string Lang { get; init; } = default!;
 }
