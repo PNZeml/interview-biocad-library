@@ -25,8 +25,11 @@ internal static class BooksGetManyEndpoint {
             return Results.ValidationProblem(requestValidationResult.ToDictionary());
         }
 
+        // Можно на прямую запросить из репозитория, но решил убрать логику пагинации и фльтрации
+        // в прикладной "слой".
         var (totalItems, items) = queryHandler.Handle(ToQuery(request));
 
+        // Не стал дополнительно добавлять DTO для ответа пользователю.
         var response = ToResponse(totalItems, items, request.Page, request.PerPage);
 
         return Results.Ok(response);
@@ -73,13 +76,13 @@ internal class BooksGetManyResponse {
 }
 
 public class PageInfo {
-    public int Items   { get; init; }
+    public int Items { get; init; }
 
-    public int Page    { get; init; }
+    public int Page { get; init; }
 
     public int PerPage { get; init; }
 
-    public int Pages   { get; init; }
+    public int Pages { get; init; }
 
     public static PageInfo Create(int items, int page, int perPage) {
         return new() {

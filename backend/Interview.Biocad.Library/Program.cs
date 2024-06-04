@@ -1,5 +1,6 @@
 using Interview.Biocad.Library.Configuration;
 using Interview.Biocad.Library.Presentation;
+using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +16,12 @@ builder.Services
             .AllowAnyOrigin());
     });
 
+// В задании сказано, что нужно "протоколировать запросы и ответы к сервисы".
+// Предполагаю, что имелось ввиду логирование "коробычнми" средствами.
 builder.Services
-    .AddHttpLogging(_ => { });
+    .AddHttpLogging(options => {
+        options.LoggingFields = HttpLoggingFields.All;
+    });
 
 builder.Services
     .AddBiocadLibraryServices();
