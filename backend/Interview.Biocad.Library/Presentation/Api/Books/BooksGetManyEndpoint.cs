@@ -1,4 +1,5 @@
-﻿using Interview.Biocad.Library.Application.Books;
+﻿using FluentValidation;
+using Interview.Biocad.Library.Application.Books;
 using Interview.Biocad.Library.Models.Books;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,15 +14,22 @@ internal static class BooksGetManyEndpoint {
         builder.MapGet("/api/books", HandleAsync);
     }
 
-    private static Task<BooksGetManyResponse> HandleAsync(
+    private static IResult HandleAsync(
         [AsParameters] BooksGetManyRequest request,
+        [FromServices] IValidator<BooksGetManyRequest> validator,
         [FromServices] BooksGetManyQueryHandler queryHandler
     ) {
+        var requestValidationResult = validator.Validate(request);
+
+        if (requestValidationResult.IsValid == false) {
+            return Results.ValidationProblem(requestValidationResult.ToDictionary());
+        }
+
         var (totalItems, items) = queryHandler.Handle(ToQuery(request));
 
         var response = ToResponse(totalItems, items, request.Page, request.PerPage);
 
-        return Task.FromResult(response);
+        return Results.Ok(response);
     }
 
     private static BooksGetManyQuery ToQuery(BooksGetManyRequest request) {

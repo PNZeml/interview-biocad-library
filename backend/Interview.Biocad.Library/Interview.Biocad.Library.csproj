@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
       <Content Update="books.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
       </Content>
     </ItemGroup>
 

@@ -53,7 +53,8 @@ type BookGetManyResponse = {
 }
 
 const fetchBooks = async (request: BooksGetManyRequestDto): Promise<BookGetManyResponse> => {
-    const endpoint = 'http://localhost:5228/api/books?'
+    // TODO: Fix, move to env
+    const endpoint = 'http://localhost:8080/api/books?'
 
     const requestSearchParams = new URLSearchParams([
         ['page', request.page.toString()],

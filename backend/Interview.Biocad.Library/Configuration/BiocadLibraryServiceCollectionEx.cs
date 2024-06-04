@@ -1,5 +1,7 @@
-﻿using Interview.Biocad.Library.Application.Books;
+﻿using FluentValidation;
+using Interview.Biocad.Library.Application.Books;
 using Interview.Biocad.Library.Models.Books;
+using Interview.Biocad.Library.Presentation.Api.Books;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Interview.Biocad.Library.Configuration;
@@ -17,6 +19,8 @@ internal static class BiocadLibraryServiceCollectionEx {
         services.TryAddSingleton<IBooksRepository, InMemBooksRepository>();
 
         services.TryAddTransient<BooksGetManyQueryHandler>();
+
+        services.TryAddSingleton<IValidator<BooksGetManyRequest>, BooksGetManyRequestValidator>();
 
         return services;
     }
