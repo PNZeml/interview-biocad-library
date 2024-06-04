@@ -7,7 +7,7 @@ internal class InMemBooksRepository : IBooksRepository {
     private readonly Lazy<FrozenSet<Book>> underlyingStore;
 
     public InMemBooksRepository(IBooksFetcher fetcher) {
-        underlyingStore = new(fetcher.Load, LazyThreadSafetyMode.ExecutionAndPublication);
+        underlyingStore = new(fetcher.Fetch, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public IEnumerable<Book> Query() {

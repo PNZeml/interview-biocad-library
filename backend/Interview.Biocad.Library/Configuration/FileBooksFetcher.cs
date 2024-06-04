@@ -12,7 +12,7 @@ internal class FileBooksFetcher : IBooksFetcher {
         booksFilePath = options.Value.Path;
     }
 
-    public FrozenSet<Book> Load() {
+    public FrozenSet<Book> Fetch() {
         if (Path.Exists(booksFilePath) == false) {
             throw new Exception("Provided Books file does not exist");
         }
