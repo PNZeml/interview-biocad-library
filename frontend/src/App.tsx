@@ -5,7 +5,7 @@ import {keepPreviousData, QueryClient, QueryClientProvider, useQuery} from '@tan
 
 const queryClient = new QueryClient()
 
-function App() {
+export function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <BooksList/>
@@ -13,7 +13,7 @@ function App() {
     )
 }
 
-type BooksGetManyParams = {
+type BooksGetManyRequestDto = {
     page: number,
     perPage: number,
     suggest: string,
@@ -21,7 +21,7 @@ type BooksGetManyParams = {
     category: string,
 }
 
-const booksParamsInit: BooksGetManyParams = {
+const booksParamsInit: BooksGetManyRequestDto = {
     page: 1,
     perPage: 5,
     suggest: '',
@@ -52,31 +52,31 @@ type BookGetManyResponse = {
     }
 }
 
+const fetchBooks = async (request: BooksGetManyRequestDto): Promise<BookGetManyResponse> => {
+    const endpoint = 'http://localhost:5228/api/books?'
+
+    const requestSearchParams = new URLSearchParams([
+        ['page', request.page.toString()],
+        ['per_page', request.perPage.toString()],
+        ['suggest', request.suggest.toString()],
+        ['author', request.author.toString()],
+        ['category', request.category.toString()],
+    ])
+
+    const response = await fetch(endpoint + new URLSearchParams(requestSearchParams))
+
+    return await response.json();
+}
+
 function BooksList() {
-    const [booksParams, setBooksParams] = useState<BooksGetManyParams>(booksParamsInit)
+    const [booksGetManyRequest, setBooksGetManyRequest] = useState<BooksGetManyRequestDto>(booksParamsInit)
 
-    const booksParamsDebounce = useDebounce<BooksGetManyParams>(booksParams, 200)
-
-    const fetchBooks = async (): Promise<BookGetManyResponse> => {
-        const endpoint = 'http://localhost:5228/api/books?'
-
-        const params = new URLSearchParams([
-            ['page', booksParamsDebounce.page.toString()],
-            ['per_page', booksParamsDebounce.perPage.toString()],
-            ['suggest', booksParamsDebounce.suggest.toString()],
-            ['author', booksParamsDebounce.author.toString()],
-            ['category', booksParamsDebounce.category.toString()],
-        ])
-
-        const res = await fetch(endpoint + new URLSearchParams(params))
-
-        return await res.json();
-    }
+    const booksGetManyRequestDebounced = useDebounce<BooksGetManyRequestDto>(booksGetManyRequest, 200)
 
     const {data, isFetching} =
         useQuery({
-            queryKey: ['projects', booksParamsDebounce],
-            queryFn: () => fetchBooks(),
+            queryKey: ['books', booksGetManyRequestDebounced],
+            queryFn: () => fetchBooks(booksGetManyRequestDebounced),
             placeholderData: keepPreviousData,
         })
 
@@ -86,43 +86,49 @@ function BooksList() {
                 <Flex gap={2}>
                     <Input
                         placeholder='Название...'
-                        value={booksParams.suggest}
+                        value={booksGetManyRequest.suggest}
                         onChange={(e) =>
-                            setBooksParams({...booksParams, suggest: e.target.value})}
+                            setBooksGetManyRequest({...booksGetManyRequest, suggest: e.target.value})}
                     />
 
                     <Input
                         placeholder='Автор...'
-                        value={booksParams.author}
+                        value={booksGetManyRequest.author}
                         onChange={(e) =>
-                            setBooksParams({...booksParams, author: e.target.value})}
+                            setBooksGetManyRequest({...booksGetManyRequest, author: e.target.value})}
                     />
 
                     <Input
                         placeholder='Жанр...'
-                        value={booksParams.category}
+                        value={booksGetManyRequest.category}
                         onChange={(e) =>
-                            setBooksParams({...booksParams, category: e.target.value})}
+                            setBooksGetManyRequest({...booksGetManyRequest, category: e.target.value})}
                     />
                 </Flex>
             }
             footer={
                 <Pagination
-                    current={booksParams.page}
+                    current={booksGetManyRequest.page}
                     defaultCurrent={1}
                     defaultPageSize={5}
-                    pageSize={booksParams.perPage}
+                    pageSize={booksGetManyRequest.perPage}
                     pageSizeOptions={[5, 10, 15]}
                     total={data?.pageInfo.items}
                     onChange={(page, pageSize) =>
-                        setBooksParams({...booksParams, page: page, perPage: pageSize})}
+                        setBooksGetManyRequest({...booksGetManyRequest, page: page, perPage: pageSize})}
                 />
             }
             dataSource={data?.items}
             loading={isFetching}
             renderItem={(item: BookDto) => (
                 <List.Item>
-                    {item.title}, {item.category}
+                    <List.Item.Meta
+                        title={
+                            <p>{item.title} -- {item.authors.map((x) => `[${x.lang}] ${x.name}`).join(',')}</p>
+                        }
+                        description={item.category}
+                    />
+                    Год публикации: {item.publicationDate}, Страниц: {item.pages}, От лет: {item.ageLimit}
                 </List.Item>
             )}
         />
