@@ -9,6 +9,13 @@ builder.Configuration
     .AddEnvironmentVariables(biocadEnvConfigurationPrefix);
 
 builder.Services
+    .AddCors(options => {
+        options.AddDefaultPolicy(policy => policy
+            .AllowAnyMethod()
+            .AllowAnyOrigin());
+    });
+
+builder.Services
     .AddHttpLogging(_ => { });
 
 builder.Services
@@ -16,6 +23,7 @@ builder.Services
 
 var app = builder.Build();
 
+app.UseCors();
 app.UseHttpLogging();
 
 app.MapBiocadLibraryEndpoints();
