@@ -24,8 +24,6 @@ services:
       - "8080:8080"
     environment:
       - Biocad_Library__Books__Path=books.json
-      - ASPNET__Logging__LogLevel__Default=Debug
-      - ASPNET__Logging__LogLevel__Microsoft.AspNetCore=Debug
     networks:
       bio-net:
 
